@@ -7,9 +7,11 @@ var eol = require('os').EOL;
 var optimist = require('optimist')
     .alias('e', 'edit')
     .alias('a', 'add')
+    .alias('l', 'list')
     .describe('e', 'Edit command\'s mann page.')
     .describe('a', 'Add line to command\'s mann page.')
-    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>' + eol + '  mann -a <command> <line>');
+    .describe('l', 'List all available mann pages.')
+    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>' + eol + '  mann -a <command> <line>' + eol + '  mann -l');
 
 var mannDir = getUserHome() + '/.mann';
 fs.mkdir(mannDir, function() {});
@@ -48,6 +50,15 @@ else if (optimist.argv.a) {
 
   mann = mann + eol + line;
   fs.writeFileSync(mannFile, mann);
+}
+else if (optimist.argv.l) {
+  var mdExtensionRegex = /\.md$/;
+
+  fs.readdirSync(mannDir).forEach(function(file) {
+    if (file.match(mdExtensionRegex)) {
+      console.log(file.replace(mdExtensionRegex, ''));
+    }
+  })
 }
 else {
   if (optimist.argv._.length == 0) {
