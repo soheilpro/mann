@@ -13,8 +13,7 @@ var optimist = require('optimist')
     .describe('l', 'List all available mann pages.')
     .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>' + eol + '  mann -a <command> <line>' + eol + '  mann -l');
 
-var mannDir = getUserHome() + '/.mann';
-fs.mkdir(mannDir, function() {});
+fs.mkdir(getMannDir(), function() {});
 
 if (optimist.argv.e) {
   var command = optimist.argv.e;
@@ -24,7 +23,7 @@ if (optimist.argv.e) {
     return;
   }
 
-  var mannFile = mannDir + '/' + command + '.md';
+  var mannFile = getMannFile(command);
   launchEditor(mannFile);
 }
 else if (optimist.argv.a) {
@@ -43,7 +42,7 @@ else if (optimist.argv.a) {
   }
 
   var mann = '';
-  var mannFile = mannDir + '/' + command + '.md';
+  var mannFile = getMannFile(command);
 
   if (fs.existsSync(mannFile))
     mann = fs.readFileSync(mannFile).toString();
@@ -54,7 +53,7 @@ else if (optimist.argv.a) {
 else if (optimist.argv.l) {
   var mdExtensionRegex = /\.md$/;
 
-  fs.readdirSync(mannDir).forEach(function(file) {
+  fs.readdirSync(getMannDir()).forEach(function(file) {
     if (file.match(mdExtensionRegex)) {
       console.log(file.replace(mdExtensionRegex, ''));
     }
@@ -67,7 +66,7 @@ else {
   }
 
   optimist.argv._.forEach(function(command) {
-    var mannFile = mannDir + '/' + command + '.md';
+    var mannFile = getMannFile(command);
 
     if (!fs.existsSync(mannFile)) {
       console.error('No mann page exists for ' + command);
@@ -98,6 +97,14 @@ function launchEditor(file) {
   .on('error', function() {
     console.error('Failed to launch the editor. Make sure the EDITOR environment variable is correctly set.');
   });
+}
+
+function getMannFile(command) {
+  return getMannDir() + '/' + command + '.md';
+}
+
+function getMannDir() {
+  return getUserHome() + '/.mann'
 }
 
 function getUserHome() {
