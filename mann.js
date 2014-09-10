@@ -6,13 +6,50 @@ var colors = require('colors');
 var eol = require('os').EOL;
 var optimist = require('optimist')
     .alias('e', 'edit')
+    .alias('a', 'add')
     .describe('e', 'Edit command\'s mann page.')
-    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>');
+    .describe('a', 'Add line to command\'s mann page.')
+    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>' + eol + '  mann -a <command> <line>');
 
 var mannDir = getUserHome() + '/.mann';
 fs.mkdir(mannDir, function() {});
 
-if (!optimist.argv.e) {
+if (optimist.argv.e) {
+  var command = optimist.argv.e;
+
+  if (typeof command != 'string') {
+    console.log(optimist.help());
+    return;
+  }
+
+  var mannFile = mannDir + '/' + command + '.md';
+  launchEditor(mannFile);
+}
+else if (optimist.argv.a) {
+  var command = optimist.argv.a;
+
+  if (typeof command != 'string') {
+    console.log(optimist.help());
+    return;
+  }
+
+  var line = optimist.argv._.join(' ');
+
+  if (!line) {
+    console.log(optimist.help());
+    return;
+  }
+
+  var mann = '';
+  var mannFile = mannDir + '/' + command + '.md';
+
+  if (fs.existsSync(mannFile))
+    mann = fs.readFileSync(mannFile).toString();
+
+  mann = mann + eol + line;
+  fs.writeFileSync(mannFile, mann);
+}
+else {
   if (optimist.argv._.length == 0) {
     console.log(optimist.help());
     return;
@@ -33,17 +70,6 @@ if (!optimist.argv.e) {
 
     console.log(mann);
   });
-}
-else {
-  var command = argv.e;
-
-  if (typeof command != 'string') {
-    console.log(optimist.help());
-    return;
-  }
-
-  var mannFile = mannDir + '/' + command + '.md';
-  launchEditor(mannFile);
 }
 
 function launchEditor(file) {
