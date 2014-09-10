@@ -7,11 +7,18 @@ var eol = require('os').EOL;
 var optimist = require('optimist')
     .alias('e', 'edit')
     .alias('a', 'add')
+    .alias('d', 'delete')
     .alias('l', 'list')
     .describe('e', 'Edit command\'s mann page.')
     .describe('a', 'Add line to command\'s mann page.')
+    .describe('d', 'Delete command\'s mann page.')
     .describe('l', 'List all available mann pages.')
-    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>' + eol + '  mann -a <command> <line>' + eol + '  mann -l');
+    .usage('Usage:' + eol +
+      '  mann <command>' + eol +
+      '  mann -e <command>' + eol +
+      '  mann -a <command> <line>' + eol +
+      '  mann -d <command>' + eol +
+      '  mann -l');
 
 fs.mkdir(getMannDir(), function() {});
 
@@ -58,6 +65,23 @@ else if (optimist.argv.l) {
       console.log(file.replace(mdExtensionRegex, ''));
     }
   })
+}
+else if (optimist.argv.d) {
+  var command = optimist.argv.d;
+
+  if (typeof command != 'string') {
+    console.log(optimist.help());
+    return;
+  }
+
+  var mannFile = getMannFile(command);
+
+  if (!fs.existsSync(mannFile)) {
+      console.error('No mann page exists for ' + command);
+      return;
+  }
+
+  fs.unlinkSync(mannFile);
 }
 else {
   if (optimist.argv._.length == 0) {
