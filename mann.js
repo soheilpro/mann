@@ -46,10 +46,20 @@ else {
 }
 
 function launchEditor(file) {
-  var editorArgs = process.env.EDITOR.split(' ');
+  var editor = process.env.EDITOR;
+
+  if (!editor) {
+    console.error('No editor found. Please set the EDITOR environment variable.');
+    return;
+  }
+
+  var editorArgs = editor.split(' ');
   var editorExecutable = editorArgs.shift();
-  var editor = spawn(editorExecutable, editorArgs.concat([file]), {stdio: 'inherit'});
-  editor.on('exit', process.exit);
+
+  spawn(editorExecutable, editorArgs.concat([file]), {stdio: 'inherit'})
+  .on('error', function() {
+    console.error('Failed to launch the editor. Make sure the EDITOR environment variable is correctly set.');
+  });
 }
 
 function getUserHome() {
