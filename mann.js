@@ -3,21 +3,22 @@
 var fs = require('fs');
 var spawn = require('child_process').spawn;
 var colors = require('colors');
-var argv = require('optimist')
+var eol = require('os').EOL;
+var optimist = require('optimist')
     .alias('e', 'edit')
-    .describe('e', 'Edit command\'s mann')
-    .argv;
+    .describe('e', 'Edit command\'s mann page.')
+    .usage('Usage:' + eol + '  mann <command>' + eol + '  mann -e <command>');
 
 var mannDir = getUserHome() + '/.mann';
 fs.mkdir(mannDir, function() {});
 
-if (!argv.e) {
-  if (argv._.length == 0) {
-    console.error('What mann page do you want?')
+if (!optimist.argv.e) {
+  if (optimist.argv._.length == 0) {
+    console.log(optimist.help());
     return;
   }
 
-  argv._.forEach(function(command) {
+  optimist.argv._.forEach(function(command) {
     var mannFile = mannDir + '/' + command + '.md';
 
     if (!fs.existsSync(mannFile)) {
@@ -37,7 +38,7 @@ else {
   var command = argv.e;
 
   if (typeof command != 'string') {
-    console.error('What mann page do you want to edit?')
+    console.log(optimist.help());
     return;
   }
 
