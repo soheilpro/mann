@@ -1,6 +1,6 @@
 {
   "name": "mann",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "With mann you will never forget command line options again.",
   "dependencies": {
     "optimist": "~0.6.1",

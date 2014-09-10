@@ -27,9 +27,30 @@ Edit a command's man page:
 mann -e <command>
 ```
 
+Add a line to a command's man page:
+
+```
+mann -a <command> <line>
+```
+
+List all available mann pages:
+
+```
+mann -l
+```
+
+Delete a command's man page:
+
+```
+mann -d <command>
+```
+
 You can mark section headers by a sharp sign (just as you do in Markdown), and mann will display them in green for better readability.
 
 ## Version History
++ **1.1**
+  + Added -a, -l, -d support.
+
 + **1.0**
 	+ Initial release
 
